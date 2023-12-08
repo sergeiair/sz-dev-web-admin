@@ -4,6 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
+    "ci": "npm install",
     "build": "remix build",
     "dev": "remix dev --manual",
     "start": "remix-serve ./build/index.js",
