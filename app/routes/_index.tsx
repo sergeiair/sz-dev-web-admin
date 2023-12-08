@@ -1,41 +1,25 @@
 import type { MetaFunction } from "@remix-run/node";
+import { Link } from '@remix-run/react';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "Hi" },
+    { name: "description", content: "Welcome!" },
   ];
 };
 
 export default function Index() {
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
+    <div className={'flex-col gap-2'}>
+      <h1 className="p-3 text-3xl font-bold underline">
+        Hi there!
+      </h1>
+
+      <div>
+        <Link className={'p-3 accent-green-700'} to={'/create'}>
+          Create
+        </Link>
+      </div>
     </div>
   );
 }
