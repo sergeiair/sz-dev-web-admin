@@ -1,3 +1,4 @@
+import { ClientStorage } from '~/storage/client-storage';
 
 export class SecuredHttp {
 
@@ -10,19 +11,27 @@ export class SecuredHttp {
 	}
 
 	public static async get(url: string, options?: any): Promise<Response> {
-		return SecuredHttp.request('GET', url, options);
+		return SecuredHttp.withHandledResponse(
+			await SecuredHttp.request('GET', url, options)
+		);
 	}
 
 	public static async post(url: string, options?: any): Promise<Response> {
-		return SecuredHttp.request('POST', url, options);
+		return SecuredHttp.withHandledResponse(
+			await SecuredHttp.request('POST', url, options)
+		);
 	}
 
 	public static async put(url: string, options?: any): Promise<Response> {
-		return SecuredHttp.request('PUT', url, options);
+		return SecuredHttp.withHandledResponse(
+			await SecuredHttp.request('PUT', url, options)
+		);
 	}
 
 	public static async delete(url: string, options?: any): Promise<Response> {
-		return SecuredHttp.request('DELETE', url, options);
+		return SecuredHttp.withHandledResponse(
+			await SecuredHttp.request('DELETE', url, options)
+		);
 	}
 
 	public static async request(method: string, url: string, data?: any): Promise<Response> {
@@ -36,5 +45,14 @@ export class SecuredHttp {
 			method: method,
 			body: !!data && typeof data === 'object' ? JSON.stringify(data) : null
 		});
+	}
+
+	private static withHandledResponse(response: Response): Response{
+		if (response.status === 401 && window) {
+			ClientStorage.clear();
+			window.location.href = '/not4u/login';
+		}
+
+		return response;
 	}
 }

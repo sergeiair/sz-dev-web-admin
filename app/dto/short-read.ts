@@ -1,3 +1,4 @@
+import { TagItem } from '~/dto/tags';
 
 export interface ShortRead {
 	id: number | null,
@@ -5,4 +6,6 @@ export interface ShortRead {
 	content: string,
 	preview: string,
 	created: string,
+	published: boolean,
+	tags: TagItem[]
 }

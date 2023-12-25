@@ -1,7 +1,8 @@
 
 export enum ClientStorageKeys {
 	accessToken = "accessToken",
-	idToken = "idToken"
+	idToken = "idToken",
+	content = "content"
 }
 
 export class ClientStorage {

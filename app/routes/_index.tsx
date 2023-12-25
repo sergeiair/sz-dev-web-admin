@@ -18,16 +18,17 @@ export default function Index() {
 
   return (
    <Authorized>
-     <div className={'flex-col gap-2'}>
-       <h1 className="p-3 text-3xl font-bold underline">
-         Hi there!
-       </h1>
+     <div className={'flex-col gap-2 pt-3'}>
 
-       <div>
-         <Link className={'p-3 accent-green-700'} to={'/not4u/short-reads'}>
-           Create
+       <nav className={'text-cyan-700'}>
+         <Link className={'p-3'} to={'/not4u/short-reads'}>
+           Short reads
          </Link>
-       </div>
+
+         <Link className={'p-3'} to={'/not4u/tags'}>
+           Tags
+         </Link>
+       </nav>
      </div>
    </Authorized>
   );

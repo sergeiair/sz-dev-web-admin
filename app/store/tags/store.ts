@@ -3,23 +3,14 @@ import { ShortRead } from '~/dto/short-read';
 import { SecuredHttp } from '~/http/secured-http';
 
 
-export const useCreateShortReadStore = create((set, get) => ({
+export const useTagsStore = create((set, get) => ({
 	items: [],
 	current: {
 		id: null,
-		title: '',
-		tags: [ ],
-		published: false,
-		content: '',
-		preview: '',
-		urlAlias: ''
+		content: null
 	},
 	setCurrent: async (item: ShortRead) => {
-		set({current: {
-			...item,
-				tags: item.tags?.map(tag => tag.id) ?? [],
-			}
-		})
+		set({current: item})
 	},
 	setProp: (key: string, value: string) => set((state: { current: ShortRead }) => ({
 		current: {
@@ -28,13 +19,13 @@ export const useCreateShortReadStore = create((set, get) => ({
 		}
 	})),
 	getAll: async () => {
-		const response = await SecuredHttp.get(`${window?.ENV?.BASE_S_URL}/api/v1/not4u/short-reads`)
+		const response = await SecuredHttp.get(`${window?.ENV?.BASE_S_URL}/api/v1/not4u/tags`)
 		const json = await response.json()
 
 		set({items: json?.data ?? []})
 	},
 	create: async (item: ShortRead) => {
-		const response = await SecuredHttp.post(`${window?.ENV?.BASE_S_URL}/api/v1/not4u/short-reads`, item)
+		const response = await SecuredHttp.post(`${window?.ENV?.BASE_S_URL}/api/v1/not4u/tags`, item)
 
 		if (response.status === 201) {
 			// @ts-ignore
@@ -44,7 +35,7 @@ export const useCreateShortReadStore = create((set, get) => ({
 		}
 	},
 	update: async (item: ShortRead) => {
-		const response = await SecuredHttp.put(`${window?.ENV?.BASE_S_URL}/api/v1/not4u/short-reads`, item)
+		const response = await SecuredHttp.put(`${window?.ENV?.BASE_S_URL}/api/v1/not4u/tags`, item)
 
 		if (response.status === 200) {
 			// @ts-ignore
@@ -57,9 +48,7 @@ export const useCreateShortReadStore = create((set, get) => ({
 		set({
 			current: {
 				id: null,
-				title: '',
 				content: '',
-				preview: ''
 			}
 		})
 	}

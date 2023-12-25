@@ -5,25 +5,42 @@ import TextEdit from '~/components/TextEdit';
 import { useCreateShortReadStore } from '~/store/shortReads/store';
 import { ShortRead } from '~/dto/short-read';
 import Authorized from '~/components/hoc/Authorized';
+import { ClientStorage, ClientStorageKeys } from '~/storage/client-storage';
+import { useTagsStore } from '~/store/tags/store';
+import TagsSelect from '~/components/TagsSelect';
+import Toggle from '~/components/Toggle';
+import Button, { ButtonColor } from '~/components/Button';
 
 export const meta: MetaFunction = () => {
 	return [
-		{title: "Create smth"},
+		{title: "Short reads"},
 		{name: "description", content: "Welcome!"},
 	];
 };
 
-export default function Create() {
+export default function ShortReads() {
 
 	const editorRef = useRef(null);
 	const store = useCreateShortReadStore();
+	const tagsStore = useTagsStore();
+
 
 	useEffect(() => {
 		store?.getAll()
+		tagsStore?.getAll()
 	}, []);
 
+	useEffect(() => {
+		if ((store?.current?.content?.length || 0) > 10) {
+			ClientStorage.set(ClientStorageKeys.content, store?.current?.content)
+		}
+	}, [store?.current?.content]);
+
+
 	const save = () => {
-		if (editorRef.current) {
+		const hasData = store?.current?.title && store?.current?.content && store?.current?.urlAlias;
+
+		if (editorRef.current && hasData) {
 			store?.current?.id ?
 				store?.update(store.current) :
 				store?.create(store.current)
@@ -53,14 +70,14 @@ export default function Create() {
 					</div>
 					<div className={'w-full md:w-[70%] p-3'}>
 
-						<h2 className={'text-2xl mb-6'}>Let's create something</h2>
+						<h1 className={'text-2xl mb-6'}>Short reads</h1>
 
 						<TextEdit
 							id={'title'}
 							label={'Title'}
 							placeholder={'Title'}
 							value={store?.current.title}
-							onChange={(v) => store?.set('title', v)}
+							onChange={(v) => store?.setProp('title', v)}
 						/>
 
 						<TextEdit
@@ -68,7 +85,7 @@ export default function Create() {
 							label={'Preview'}
 							placeholder={'Preview'}
 							value={store?.current.preview}
-							onChange={(v) => store?.set('preview', v)}
+							onChange={(v) => store?.setProp('preview', v)}
 						/>
 
 						<TextEdit
@@ -76,11 +93,33 @@ export default function Create() {
 							label={'URL Alias'}
 							placeholder={'URL Alias'}
 							value={store?.current.urlAlias}
-							onChange={(v) => store?.set('urlAlias', v)}
+							onChange={(v) => store?.setProp('urlAlias', v)}
 						/>
 
+						<div className={'pb-6'}>
+							<TagsSelect
+								tags={tagsStore?.items}
+								selected={store?.current?.tags}
+								onSelect={(v) => store?.setProp('tags', v)}>
+
+							</TagsSelect>
+						</div>
+
+						<div className={'py-6'}>
+
+							<Toggle
+								label={'Published'}
+								isChecked={store?.current?.published ?? false}
+								id={'published'}
+								onChange={v => store?.setProp('published', v)}/>
+
+						</div>
+
 						<Editor
-							apiKey='4lfgr3pby1wauskojx7frnnjkzbvm0ed5o5pdmyq6flfeset'
+							apiKey={[
+								'98qw16kya5pacxpe1vvi1hcg6h86ahmq0lfdtm5m8cjwwqeh',
+								'4lfgr3pby1wauskojx7frnnjkzbvm0ed5o5pdmyq6flfeset'
+							][0]}
 							// @ts-ignore
 							onInit={(evt, editor) => editorRef.current = editor}
 							initialValue={store?.current.content}
@@ -98,15 +137,27 @@ export default function Create() {
 									bullist numlist checklist | code | removeformat ',
 								content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
 							}}
-							onChange={() => store?.set('content', editorRef.current?.getContent())}
+							onChange={() => store?.setProp('content', editorRef.current?.getContent())}
 						/>
 
-						<div className={'sticky bottom-3 w-100 flex items-center justify-center'}>
-							<button
-								className="mx-auto mt-6 w-[200px] bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-								onClick={save}>
-								Save
-							</button>
+						<div className={' w-100 flex items-center justify-between gap-2'}>
+							<div className={'flex  gap-1'}>
+								<Button
+									label={'Clear'}
+									color={ButtonColor.YELLOW}
+									onClick={() => store?.clear()}/>
+								<Button
+									label={'Restore'}
+									color={ButtonColor.GREEN}
+									onClick={() => store?.setProp('content', ClientStorage.get(ClientStorageKeys.content))}/>
+							</div>
+
+							<div className={'w-[200px]'}>
+								<Button
+									label={'Save'}
+									color={ButtonColor.BLUE}
+									onClick={save}/>
+							</div>
 						</div>
 					</div>
 				</div>

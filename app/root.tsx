@@ -1,5 +1,5 @@
 import type { LinksFunction } from "@remix-run/node";
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData, } from "@remix-run/react";
+import { Link, Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData, } from "@remix-run/react";
 import stylesheet from "~/styles/tailwind.css";
 import * as process from 'process';
 import { useEffect, useState } from 'react';
@@ -17,7 +17,7 @@ export function loader(): Response {
 }
 
 export default function App() {
-	const data = useLoaderData<typeof loader>();
+	const envData = useLoaderData<typeof loader>();
 	const store = useUserStore();
 	const [initialized, setInitialized] = useState(false);
 
@@ -40,12 +40,18 @@ export default function App() {
 			<Links/>
 		</head>
 		<body>
+		<h1 className="p-3 text-3xl bg-gray-700 text-white font-bold underline">
+			<Link to={'/'}>
+				Hi there!
+			</Link>
+		</h1>
+
 		{initialized ? <Outlet/> : <></>}
 		<ScrollRestoration/>
 		<script
 			dangerouslySetInnerHTML={{
 				__html: `window.ENV = ${JSON.stringify(
-					data ?? {},
+					envData ?? {},
 				)}`,
 			}}
 		/>
